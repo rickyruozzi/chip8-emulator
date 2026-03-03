@@ -182,14 +182,21 @@ void emulateCycle(Chip8* chip8){
                         chip8->V[(opcode >> 8) & 0X0F] = chip8->delay_timer; 
                     break;
                     case 0x000A :
+                        // Istruzione che attende la pressione di un tasto
+                        // Se nessun tasto è premuto, NON avanzare nel programma
                         {
-                            key_pressed = false; 
+                            bool keyFound = false;
                             for(int i=0; i<16; i++){
                                 if(chip8->keys[i]){
-                                    chip8->V[(opcode >> 8) & 0X0F] = i; //salva il numero del tasto premuto nel registro Vx
-                                    key_pressed = true; //indica che un tasto è stato premuto
+                                    chip8->V[(opcode >> 8) & 0X0F] = i;
+                                    keyFound = true;
+                                    break;
                                 }
-                            } 
+                            }
+                            // Se nessun tasto è premuto, tornare indietro nel PC per eseguire di nuovo questa istruzione
+                            if(!keyFound) {
+                                chip8->pc -= 2;
+                            }
                         }
                     break;
                     case 0x0015 : 

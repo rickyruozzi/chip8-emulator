@@ -23,39 +23,39 @@ void showCursor() {
 
 // Mappatura dei tasti Windows ai tasti CHIP-8 per Space Invaders
 void updateKeys(Chip8* chip8) {
-    // Resetta tutti i tasti
+    // Resettiamo tutto a false
     memset(chip8->keys, false, 16);
     
-    // La tastiera del CHIP-8 è:
-    // 1 2 3 C  -> 1, 2, 3, C (4)
-    // 4 5 6 D  -> 4, 5, 6, D (D)
-    // 7 8 9 E  -> 7, 8, 9, E (E)
-    // A 0 B F  -> A(10), 0, B(11), F(15)
+    // Space Invaders puo usare diversi tasti:
+    // Per muoversi: 4, 6, 7, 9 o frecce
+    // Per sparare: 0, 5, Q, W, Space
     
-    // Space Invaders usa:
-    // 7 = sinistra
-    // 8 = giù (non usato)
-    // 9 = destra  
-    // 0 = sparo
-    
-    // Freccia sinistra -> tasto 7
+    // --- SINISTRA (tasti 4, 7) ---
+    if (GetAsyncKeyState('A') & 0x8000) chip8->keys[0x7] = true;
+    if (GetAsyncKeyState('4') & 0x8000) chip8->keys[0x7] = true;
+    if (GetAsyncKeyState('7') & 0x8000) chip8->keys[0x7] = true;
     if (GetAsyncKeyState(VK_LEFT) & 0x8000) chip8->keys[0x7] = true;
     
-    // Freccia destra -> tasto 9
+    // --- DESTRA (tasti 6, 9) ---
+    if (GetAsyncKeyState('D') & 0x8000) chip8->keys[0x9] = true;
+    if (GetAsyncKeyState('6') & 0x8000) chip8->keys[0x9] = true;
+    if (GetAsyncKeyState('9') & 0x8000) chip8->keys[0x9] = true;
     if (GetAsyncKeyState(VK_RIGHT) & 0x8000) chip8->keys[0x9] = true;
     
-    // Spazio -> tasto 0 (spara)
+    // --- SPARA (tasti 0, 5, Q, W, Space) ---
+    if (GetAsyncKeyState('Q') & 0x8000) chip8->keys[0x5] = true;
+    if (GetAsyncKeyState('W') & 0x8000) chip8->keys[0x5] = true;
+    if (GetAsyncKeyState('5') & 0x8000) chip8->keys[0x5] = true;
+    if (GetAsyncKeyState('0') & 0x8000) chip8->keys[0x0] = true;
     if (GetAsyncKeyState(VK_SPACE) & 0x8000) chip8->keys[0x0] = true;
+    if (GetAsyncKeyState(VK_RETURN) & 0x8000) chip8->keys[0x5] = true; // Enter
     
-    // Alternative: tastierino numerico
-    if (GetAsyncKeyState('4') & 0x8000) chip8->keys[0x7] = true;  // 4 = sinistra
-    if (GetAsyncKeyState('6') & 0x8000) chip8->keys[0x9] = true;  // 6 = destra
-    if (GetAsyncKeyState('5') & 0x8000) chip8->keys[0x0] = true;  // 5 = spara
-    
-    // Anche Z-X-C come alternative
-    if (GetAsyncKeyState('Z') & 0x8000) chip8->keys[0x7] = true;  // Z = sinistra
-    if (GetAsyncKeyState('X') & 0x8000) chip8->keys[0x9] = true; // X = destra
-    if (GetAsyncKeyState('C') & 0x8000) chip8->keys[0x0] = true; // C = spara
+    // --- TASTO PER AVVIARE IL GIOCO ---
+    // Alcune versioni usano il tasto 5 per iniziare
+    // Prova anche Z, X, C come alternative
+    if (GetAsyncKeyState('Z') & 0x8000) chip8->keys[0x5] = true;
+    if (GetAsyncKeyState('X') & 0x8000) chip8->keys[0x5] = true;
+    if (GetAsyncKeyState('C') & 0x8000) chip8->keys[0x5] = true;
 }
 
 int main(int argc, char* argv[]) {
@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
     loadRom(&chip8, argv[1]);
     
     printf("ROM loaded!\n");
-    printf("Controls: Arrow keys or Z/X/C to move, SPACE or 5 to shoot\n");
+    printf("Controls: A/D (move), Q/W/SPACE/ENTER (shoot/start)\n");
     printf("Press ESC to exit.\n\n");
     
     Sleep(1000);
