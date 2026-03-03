@@ -48,6 +48,12 @@ void emulateCycle(Chip8* chip8){
                 chip8->sp--;
                 chip8->pc = chip8->stack[chip8->sp]; //imposta il pc al valore trovato nello stack
                 break;
+            case 0x00FE : // disable extended screen mode
+                // Per screen mode standard (non implementato completamente)
+                break;
+            case 0x00FF : // enable extended screen mode  
+                // Per screen mode 128x64 (non implementato completamente)
+                break;
         }
         break;
         case 0x1000 : // jump to address NNN, imposta il program counter a NNN, ossia l'indirizzo specificato negli ultimi 12 bit dell'istruzione
